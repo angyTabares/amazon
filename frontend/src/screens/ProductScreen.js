@@ -69,61 +69,58 @@ function ProductScreen() {
   };
 
   return loading ? (
-    <LoadingBox></LoadingBox>
+    <LoadingBox />
   ) : error ? (
     <MessageBox variant="danger">{error}</MessageBox>
   ) : (
-    <div>
-      <Row>
-        <Col md={6}>
+    <div className="py-4">
+      <Helmet>
+        <title>{product.name}</title>
+      </Helmet>
+      <Row className="gy-4">
+        {/* Imagen */}
+        <Col md={6} className="d-flex align-items-start justify-content-center">
           <img
-            className="img-large"
+            className="img-fluid rounded shadow-sm"
             src={product.image}
             alt={product.name}
-          ></img>
+            style={{
+              maxHeight: "480px", // 🔹 ajusta el alto máximo
+              objectFit: "contain", // 🔹 mantiene proporción sin recortar
+            }}
+          />
         </Col>
-        <Col md={3}>
-          <ListGroup.Item>
-            <Helmet>
-              <title>{product.name}</title>
-            </Helmet>
-            <h1>{product.name}</h1>
-          </ListGroup.Item>
-          <ListGroup.Item>
-            <Rating
-              rating={product.rating}
-              numReviews={product.numReviews}
-            ></Rating>
-          </ListGroup.Item>
-          <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
-          <ListGroup.Item>
-            Description:
-            <p>{product.description}</p>
-          </ListGroup.Item>
-        </Col>
-        <Col md={3}>
-          <Card>
+
+        {/* Info + compra */}
+        <Col md={6}>
+          {/* Info principal */}
+          <Card className="mb-3 shadow-sm border-0">
+            <Card.Body>
+              <Helmet>
+                <title>{product.name}</title>
+              </Helmet>
+              <h2 className="fw-bold mb-3">{product.name}</h2>
+              <Rating rating={product.rating} numReviews={product.numReviews} />
+              <h4 className="text-primary mt-3">Price: ${product.price}</h4>
+              <p className="mt-3 text-muted">{product.description}</p>
+            </Card.Body>
+          </Card>
+
+          {/* Card de compra */}
+          <Card className="shadow-sm border-0">
             <Card.Body>
               <ListGroup variant="flush">
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Price:</Col>
-                    <Col>${product.price}</Col>
-                  </Row>
+                <ListGroup.Item className="d-flex justify-content-between">
+                  <span>Price:</span> <strong>${product.price}</strong>
                 </ListGroup.Item>
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Status:</Col>
-                    <Col>
-                      {product.countInStock > 0 ? (
-                        <Badge bg="success">In Stock</Badge>
-                      ) : (
-                        <Badge bg="danger">Unavaliable</Badge>
-                      )}
-                    </Col>
-                  </Row>
+                <ListGroup.Item className="d-flex justify-content-between">
+                  <span>Status:</span>
+                  {product.countInStock > 0 ? (
+                    <Badge bg="success">In Stock</Badge>
+                  ) : (
+                    <Badge bg="danger">Unavailable</Badge>
+                  )}
                 </ListGroup.Item>
-
                 {product.countInStock > 0 && (
                   <ListGroup.Item>
                     <div className="d-grid">

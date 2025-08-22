@@ -9,7 +9,7 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Container from "react-bootstrap/Container";
 import { LinkContainer } from "react-router-bootstrap";
-import { useContext, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import { Store } from "./Store";
 import CartScreen from "./screens/CartScreen";
 import SigninScreen from "./screens/SigninScreen";
@@ -25,6 +25,7 @@ import { getError } from "./utils";
 import axios from "axios";
 import SearchBox from "./components/SearchBox";
 import SearchScreen from "./screens/SearchScreen";
+import LoadingBox from "./components/LoadingBox";
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -72,7 +73,7 @@ function App() {
                 <i className="fas fa-bars"></i>
               </Button>
               <LinkContainer to="/">
-                <Navbar.Brand>amazon</Navbar.Brand>
+                <Navbar.Brand>A-STORE</Navbar.Brand>
               </LinkContainer>
               <Navbar.Toggle aria-controls="basics-navbar-nav"></Navbar.Toggle>
               <Navbar.Collapse id="basic-navbar-nav">
@@ -116,18 +117,26 @@ function App() {
         <div
           className={
             sidebarIsOpen
-              ? "active-nav side-navbar d-flex justify-content-between flex-wrap flex-column"
-              : "side-navbar d-flex justify-content-between flex-wrap flex-column"
+              ? "active-nav side-navbar d-flex justify-content-between flex-wrap flex-column shadow-lg bg-dark"
+              : "side-navbar d-flex justify-content-between flex-wrap flex-column shadow-lg bg-dark"
           }
+          style={{
+            color: "white",
+            minHeight: "100vh",
+            position: "fixed",
+            transition: "all 0.3s ease",
+          }}
         >
-          <Nav className="flex-column text-white w-100 p-2">
-            <Nav.Item>
-              <strong>Categories</strong>
+          <Nav className="flex-column w-100 p-3">
+            <Nav.Item className="mb-3 border-bottom pb-2">
+              <strong className="fs-5 text-uppercase tracking-wide">
+                Categories
+              </strong>
             </Nav.Item>
+
             {categories.map((category) => (
-              <Nav.Item key={category}>
+              <Nav.Item key={category} className="mb-2">
                 <LinkContainer
-                  //         to={`/search?category=${category}`}
                   to={{
                     pathname: "/search",
                     hash: "#hash",
@@ -135,35 +144,67 @@ function App() {
                   }}
                   onClick={() => setSidebarIsOpen(false)}
                 >
-                  <Nav.Link>{category}</Nav.Link>
+                  <Nav.Link
+                    className="text-white rounded px-3 py-2 fw-semibold"
+                    style={{
+                      transition: "background 0.2s ease, transform 0.2s ease",
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(255,255,255,0.2)";
+                      e.currentTarget.style.transform = "translateX(5px)";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.transform = "translateX(0)";
+                    }}
+                  >
+                    {category}
+                  </Nav.Link>
                 </LinkContainer>
               </Nav.Item>
             ))}
           </Nav>
         </div>
+
         <main>
           <Container className="mt-3">
-            <Routes>
-              <Route path="/product/:slug" element={<ProductScreen />} />
-              <Route path="/cart" element={<CartScreen />} />
-              <Route path="/search" element={<SearchScreen />} />
-              <Route path="/signin" element={<SigninScreen />} />
-              <Route path="/signup" element={<SignupScreen />} />
-              <Route path="/profile" element={<ProfileScreen />} />
-              <Route path="/placeorder" element={<PlaceOrderScreen />}></Route>
-              <Route path="/order/:id" element={<OrderScreen />}></Route>
-              <Route
-                path="/orderhistory"
-                element={<OrderHistoryScreen></OrderHistoryScreen>}
-              ></Route>
-              <Route path="/shipping" element={<ShippingAddressScreen />} />
-              <Route path="/payment" element={<PaymentMethodScreen />}></Route>
-              <Route path="/" element={<HomeScreen />} />
-            </Routes>
+            <Suspense fallback={<LoadingBox />}>
+              <Routes>
+                <Route path="/product/:slug" element={<ProductScreen />} />
+                <Route path="/cart" element={<CartScreen />} />
+                <Route path="/search" element={<SearchScreen />} />
+                <Route path="/signin" element={<SigninScreen />} />
+                <Route path="/signup" element={<SignupScreen />} />
+                <Route path="/profile" element={<ProfileScreen />} />
+                <Route
+                  path="/placeorder"
+                  element={<PlaceOrderScreen />}
+                ></Route>
+                <Route path="/order/:id" element={<OrderScreen />}></Route>
+                <Route
+                  path="/orderhistory"
+                  element={<OrderHistoryScreen></OrderHistoryScreen>}
+                ></Route>
+                <Route path="/shipping" element={<ShippingAddressScreen />} />
+                <Route
+                  path="/payment"
+                  element={<PaymentMethodScreen />}
+                ></Route>
+                <Route path="/" element={<HomeScreen />} />
+              </Routes>
+            </Suspense>
           </Container>
         </main>
-        <footer>
-          <div className="text-center">All rights reserved</div>
+        <footer
+          className="bg-dark text-light py-4 mt-5 shadow-sm"
+          style={{ borderTop: "2px solid rgba(255,255,255,0.1)" }}
+        >
+          <div className="container text-center">
+            <p className="mb-2 fw-semibold">
+              © {new Date().getFullYear()} All rights reserved
+            </p>
+          </div>
         </footer>
       </div>
     </BrowserRouter>

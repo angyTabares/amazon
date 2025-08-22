@@ -11,7 +11,6 @@ import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 import Button from "react-bootstrap/Button";
 import Product from "../components/Product";
-import LinkContainer from "react-router-bootstrap/LinkContainer";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -134,112 +133,124 @@ export default function SearchScreen() {
         <title>Search Products</title>
       </Helmet>
       <Row>
-        <Col md={3}>
-          <h3>Department</h3>
-          <div>
-            <ul>
-              <li>
-                <Link
-                  className={"all" === category ? "text-bold" : ""}
-                  to={getFilterUrl({ category: "all" })}
-                >
-                  Any
-                </Link>
-              </li>
+        {/* Sidebar */}
+        <Col md={3} className="mb-4">
+          <div className="p-3 bg-light rounded shadow-sm">
+            {/* Categorías */}
+            <h5 className="mb-3">Department</h5>
+            <div className="list-group mb-4">
+              <Link
+                className={`list-group-item list-group-item-action ${
+                  category === "all" ? "active" : ""
+                }`}
+                to={getFilterUrl({ category: "all" })}
+              >
+                Any
+              </Link>
               {categories.map((c) => (
-                <li key={c}>
-                  <Link
-                    className={c === category ? "text-bold" : ""}
-                    to={getFilterUrl({ category: c })}
-                  >
-                    {c}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3>Price</h3>
-            <ul>
-              <li>
                 <Link
-                  className={"all" === price ? "text-bold" : ""}
-                  to={getFilterUrl({ price: "all" })}
+                  key={c}
+                  className={`list-group-item list-group-item-action ${
+                    c === category ? "active" : ""
+                  }`}
+                  to={getFilterUrl({ category: c })}
                 >
-                  Any
+                  {c}
                 </Link>
-              </li>
+              ))}
+            </div>
+
+            {/* Precios */}
+            <h5 className="mb-3">Price</h5>
+            <div className="list-group mb-4">
+              <Link
+                className={`list-group-item list-group-item-action ${
+                  price === "all" ? "active" : ""
+                }`}
+                to={getFilterUrl({ price: "all" })}
+              >
+                Any
+              </Link>
               {prices.map((p) => (
-                <li key={p.value}>
-                  <Link
-                    to={getFilterUrl({ price: p.value })}
-                    className={p.value === price ? "text-bold" : ""}
-                  >
-                    {p.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3>Avg. Customer Review</h3>
-            <ul>
-              {ratings.map((r) => (
-                <li key={r.name}>
-                  <Link
-                    to={getFilterUrl({ rating: r.rating })}
-                    className={`${r.rating}` === `${rating}` ? "text-bold" : ""}
-                  >
-                    <Rating caption={" & up"} rating={r.rating}></Rating>
-                  </Link>
-                </li>
-              ))}
-              <li>
                 <Link
-                  to={getFilterUrl({ rating: "all" })}
-                  className={rating === "all" ? "text-bold" : ""}
+                  key={p.value}
+                  className={`list-group-item list-group-item-action ${
+                    p.value === price ? "active" : ""
+                  }`}
+                  to={getFilterUrl({ price: p.value })}
                 >
-                  <Rating caption={" & up"} rating={0}></Rating>
+                  {p.name}
                 </Link>
-              </li>
-            </ul>
+              ))}
+            </div>
+
+            {/* Rating */}
+            <h5 className="mb-3">Avg. Customer Review</h5>
+            <div className="list-group">
+              {ratings.map((r) => (
+                <Link
+                  key={r.name}
+                  className={`list-group-item list-group-item-action ${
+                    `${r.rating}` === `${rating}` ? "active" : ""
+                  }`}
+                  to={getFilterUrl({ rating: r.rating })}
+                >
+                  <Rating caption={" & up"} rating={r.rating}></Rating>
+                </Link>
+              ))}
+              <Link
+                className={`list-group-item list-group-item-action ${
+                  rating === "all" ? "active" : ""
+                }`}
+                to={getFilterUrl({ rating: "all" })}
+              >
+                <Rating caption={" & up"} rating={0}></Rating>
+              </Link>
+            </div>
           </div>
         </Col>
+
+        {/* Main Content */}
         <Col md={9}>
           {loading ? (
-            <LoadingBox></LoadingBox>
+            <LoadingBox />
           ) : error ? (
             <MessageBox variant="danger">{error}</MessageBox>
           ) : (
             <>
-              <Row className="justify-content-between mb-3">
+              {/* Header */}
+              <Row className="justify-content-between align-items-center mb-3">
                 <Col md={6}>
-                  <div>
+                  <span className="fw-bold">
                     {countProducts === 0 ? "No" : countProducts} Results
-                    {query !== "all" && " : " + query}
-                    {category !== "all" && " : " + category}
-                    {price !== "all" && " : Price " + price}
-                    {rating !== "all" && " : Rating " + rating + " & up"}
-                    {query !== "all" ||
+                  </span>
+                  {query !== "all" && ` : ${query}`}
+                  {category !== "all" && ` : ${category}`}
+                  {price !== "all" && ` : Price ${price}`}
+                  {rating !== "all" && ` : Rating ${rating} & up`}
+
+                  {(query !== "all" ||
                     category !== "all" ||
                     rating !== "all" ||
-                    price !== "all" ? (
-                      <Button
-                        variant="light"
-                        onClick={() => navigate("/search")}
-                      >
-                        <i className="fas fa-times-circle"></i>
-                      </Button>
-                    ) : null}
-                  </div>
+                    price !== "all") && (
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      className="ms-2"
+                      onClick={() => navigate("/search")}
+                    >
+                      <i className="fas fa-times-circle"></i> Clear
+                    </Button>
+                  )}
                 </Col>
                 <Col className="text-end">
-                  Sort by{" "}
+                  <label className="me-2 fw-semibold">Sort by</label>
                   <select
+                    className="form-select d-inline-block w-auto"
                     value={order}
-                    onChange={(e) => {
-                      navigate(getFilterUrl({ order: e.target.value }));
-                    }}
+                    onChange={(e) =>
+                      navigate(getFilterUrl({ order: e.target.value }))
+                    }
                   >
                     <option value="newest">Newest Arrivals</option>
                     <option value="lowest">Price: Low to High</option>
@@ -248,33 +259,41 @@ export default function SearchScreen() {
                   </select>
                 </Col>
               </Row>
-              {products.length === 0 && (
+
+              {/* Products */}
+              {products.length === 0 ? (
                 <MessageBox>No Product Found</MessageBox>
+              ) : (
+                <Row>
+                  {products.map((product) => (
+                    <Col sm={6} lg={4} className="mb-4" key={product._id}>
+                      <Product product={product}></Product>
+                    </Col>
+                  ))}
+                </Row>
               )}
 
-              <Row>
-                {products.map((product) => (
-                  <Col sm={6} lg={4} className="mb-3" key={product._id}>
-                    <Product product={product}></Product>
-                  </Col>
-                ))}
-              </Row>
-
-              <div>
-                {[...Array(pages).keys()].map((x) => (
-                  <Link
-                    key={x + 1}
-                    className="mx-1"
-                    to={getFilterUrl({ page: x + 1 })}
-                  >
-                    <Button
-                      className={Number(page) === x + 1 ? "text-bold" : ""}
-                      variant="light"
-                    >
-                      {x + 1}
-                    </Button>
-                  </Link>
-                ))}
+              {/* Pagination */}
+              <div className="d-flex justify-content-center mt-4">
+                <nav>
+                  <ul className="pagination">
+                    {[...Array(pages).keys()].map((x) => (
+                      <li
+                        key={x + 1}
+                        className={`page-item ${
+                          Number(page) === x + 1 ? "active" : ""
+                        }`}
+                      >
+                        <Link
+                          className="page-link"
+                          to={getFilterUrl({ page: x + 1 })}
+                        >
+                          {x + 1}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
               </div>
             </>
           )}
