@@ -26,9 +26,9 @@ export default function ProfileScreen() {
   const [name, setName] = useState(userInfo.name);
   const [email, setEmail] = useState(userInfo.email);
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [, setConfirmPassword] = useState("");
 
-  const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
+  const [dispatch] = useReducer(reducer, {
     loadingUpdate: false,
   });
   const submitHandler = async (e) => {
