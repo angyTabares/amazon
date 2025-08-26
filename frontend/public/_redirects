@@ -1,2 +1,4 @@
-/api/*  https://amazon-clon.onrender.com/api/:splat  200
-/*       /index.html 
+/api/*    https://amazon-clon.onrender.com/api/:splat    200
+/static/* /static/:splat                                  200
+/assets/* /assets/:splat                                  200
+/*        /index.html                                     200
